@@ -208,6 +208,7 @@ class Pipeline:
         pitch: int = 0,
         f0_autotune: bool = False,
         f0_autotune_strength: float = 1.0,
+        filter_radius: int = 3,
         proposed_pitch: bool = False,
         proposed_pitch_threshold: float = 155.0,
     ):
@@ -220,6 +221,7 @@ class Pipeline:
             pitch: Key to adjust the pitch of the F0 contour.
             f0_method: Method to use for F0 estimation (e.g., "crepe").
             f0_autotune: Whether to apply autotune to the F0 contour.
+            filter_radius: Filter radius for F0 estimation.
             proposed_pitch: whether to apply proposed pitch adjustment
             proposed_pitch_threshold: target frequency, 155.0 for male, 255.0 for female
         """
@@ -240,20 +242,20 @@ class Pipeline:
             model = RMVPE(
                 device=self.device, sample_rate=self.sample_rate, hop_size=self.window, models_dir=self.models_dir
             )
-            f0 = model.get_f0(x, filter_radius=0.03)
+            f0 = model.get_f0(x, filter_radius=filter_radius * 0.01)
             del model
         elif f0_method == "fcpe":
             model = FCPE(
                 device=self.device, sample_rate=self.sample_rate, hop_size=self.window, models_dir=self.models_dir
             )
-            f0 = model.get_f0(x, p_len, filter_radius=0.006)
+            f0 = model.get_f0(x, p_len, filter_radius=filter_radius * 0.002)
             del model
         else:
             # Fallback to RMVPE if method is unknown
             model = RMVPE(
                 device=self.device, sample_rate=self.sample_rate, hop_size=self.window, models_dir=self.models_dir
             )
-            f0 = model.get_f0(x, filter_radius=0.03)
+            f0 = model.get_f0(x, filter_radius=filter_radius * 0.01)
             del model
 
         # f0 adjustments
@@ -422,6 +424,7 @@ class Pipeline:
         protect,
         f0_autotune,
         f0_autotune_strength,
+        filter_radius,
         proposed_pitch,
         proposed_pitch_threshold,
     ):
@@ -485,6 +488,7 @@ class Pipeline:
                 pitch,
                 f0_autotune,
                 f0_autotune_strength,
+                filter_radius,
                 proposed_pitch,
                 proposed_pitch_threshold,
             )

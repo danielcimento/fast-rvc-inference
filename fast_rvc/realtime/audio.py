@@ -3,7 +3,6 @@ import sys
 import librosa
 import traceback
 import numpy as np
-import sounddevice as sd
 from queue import Queue
 from dataclasses import dataclass
 
@@ -38,6 +37,7 @@ def list_audio_device():
     Function to query audio devices and host api.
     """
     try:
+        import sounddevice as sd
         audio_device_list = sd.query_devices()
     except Exception as e:
         print("An error occurred while querying the audio device:", e)
@@ -59,6 +59,7 @@ def list_audio_device():
     ]
 
     try:
+        import sounddevice as sd
         hostapis = sd.query_hostapis()
     except Exception as e:
         print("An error occurred while querying the host api:", e)
@@ -111,6 +112,7 @@ def resolve_sample_rate(
     if asio_enabled:
         return audio_sample_rate
     try:
+        import sounddevice as sd
         device = sd.query_devices(input_device_id)
         return int(device["default_samplerate"])
     except Exception:

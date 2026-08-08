@@ -25,4 +25,9 @@ setup(
         "webrtcvad-wheels",
     ],
     python_requires=">=3.8",
+    entry_points={
+        "console_scripts": [
+            "fast-rvc=fast_rvc.cli:main",
+        ],
+    },
 )
